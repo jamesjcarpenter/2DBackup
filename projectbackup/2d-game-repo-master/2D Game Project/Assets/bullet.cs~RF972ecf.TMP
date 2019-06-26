@@ -1,0 +1,56 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class bullet : MonoBehaviour
+{
+    public float speed = 20f;
+    public Rigidbody2D rb;
+    public int damage = 40;
+    public GameObject impactEffect;
+    public bool m_FacingRight = true;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb.velocity = transform.position * speed;
+        rb.velocity = transform.rotation * speed;
+    }
+
+    void OnTriggerEnter2D()
+    {
+        Enemy enemy = GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+        }
+
+        Instantiate(impactEffect, transform.position, transform.rotation);
+        Destroy(gameObject);
+    }
+    void Move(float move)
+    {
+        // If the input is moving the player right and the player is facing left...
+        if (move > 0 && !m_FacingRight)
+        {
+            // ... flip the player.
+            Flip();
+        }
+        // Otherwise if the input is moving the player left and the player is facing right...
+        else if (move < 0 && m_FacingRight)
+        {
+            // ... flip the player.
+            Flip();
+        }
+        void Flip()
+        {
+            // Switch the way the player is labelled as facing.
+            m_FacingRight = !m_FacingRight;
+
+            // Multiply the player's x local scale by -1.
+            Vector3 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
+        }
+    }
+}
